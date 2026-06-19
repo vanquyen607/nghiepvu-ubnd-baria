@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Thông báo kết luận{% endblock %}
+{% block content %}
+{% set active = 'ket_luan' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-file-earmark-check text-danger"></i> Thông báo kết luận cuộc họp</h4>
+  <div class="d-flex gap-2">
+    <a href="/doc" class="btn btn-modern btn-outline-primary btn-modern-sm"><i class="bi bi-file-earmark-richtext"></i> Tra cứu & lên lịch</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card-modern">
+      <div class="card-header"><i class="bi bi-upload me-2"></i>Tạo Thông báo kết luận</div>
+      <div style="padding:1.5rem;">
+        <p class="text-muted small mb-3">
+          Tải lên file giấy mời, biên bản cuộc họp (PDF/DOCX/TXT) để tự động soạn thảo
+          Thông báo kết luận theo thể thức văn bản hành chính UBND.
+        </p>
+        <form method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <div class="form-label-modern">Chọn file văn bản</div>
+            <input class="form-control form-modern" type="file" name="file" accept=".pdf,.docx,.txt" required>
+            <div class="form-text small">Hỗ trợ: PDF, DOCX, TXT</div>
+          </div>
+          <button type="submit" class="btn btn-modern btn-danger w-100">
+            <i class="bi bi-file-earmark-text"></i> Soạn Thông báo kết luận
+          </button>
+        </form>
+      </div>
+    </div>
+
+    {% if result %}
+    <div class="card-modern mt-3 border-success">
+      <div class="card-header text-success"><i class="bi bi-check-circle me-2"></i>Kết quả</div>
+      <div style="padding:1.25rem;text-align:center;">
+        <i class="bi bi-file-earmark-check text-success" style="font-size:2.5rem;display:block;margin-bottom:.75rem;"></i>
+        <p class="fw-semibold mb-1">Đã tạo Thông báo kết luận</p>
+        <p class="text-muted small mb-2">Từ file: <strong>{{ result.file }}</strong></p>
+        {% if result.output %}
+        <a href="/ket-luan/download/{{ result.output }}" class="btn btn-modern btn-success mt-2">
+          <i class="bi bi-download"></i> Tải file kết quả
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card-modern">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-clock-history me-2"></i>Lịch sử thông báo kết luận</span>
+        <span class="badge bg-danger rounded-pill">{{ files|length }}</span>
+      </div>
+      <div style="max-height:500px;overflow-y:auto;">
+        {% if files %}
+        <table class="table-modern table">
+          <thead>
+            <tr>
+              <th>Tên file</th>
+              <th>Dung lượng</th>
+              <th>Ngày tạo</th>
+              <th class="text-end">Tải về</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in files %}
+            <tr>
+              <td><i class="bi bi-file-earmark-word text-primary me-2"></i>{{ f.name }}</td>
+              <td><span class="text-muted small">{{ f.size }}</span></td>
+              <td><span class="text-muted small">{{ f.date }}</span></td>
+              <td class="text-end">
+                <a href="/ket-luan/download/{{ f.name }}" class="btn btn-modern btn-modern-sm btn-outline-primary">
+                  <i class="bi bi-download"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <p>Chưa có Thông báo kết luận nào</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

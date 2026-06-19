@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cập nhật trạng thái{% endblock %}
+{% block content %}
+{% set active = 'tasks' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-arrow-repeat text-primary"></i> Cập nhật trạng thái</h4>
+  <a href="/tasks" class="btn btn-modern btn-modern-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+</div>
+
+<div class="card-modern form-page-card">
+  <div style="padding:1.5rem 2rem;">
+    <div style="font-weight:500;font-size:.9rem;margin-bottom:1.5rem;padding:.75rem 1rem;background:#f8f9fc;border-radius:8px;">
+      <i class="bi bi-quote me-2 text-muted"></i>{{ task[1][:80] if task else '' }}
+    </div>
+    <form method="POST">
+      <div class="form-label-modern"><i class="bi bi-flag me-1"></i> Trạng thái mới</div>
+      <select name="trang_thai" class="form-control form-modern" style="font-size:1rem;padding:.75rem 1rem;">
+        <option value="🟢 Đang thực hiện" {{ 'selected' if task and 'Đang thực hiện' in (task[9] if task|length > 9 else '') else '' }}>🟢 Đang thực hiện</option>
+        <option value="🟡 Sắp đến hạn" {{ 'selected' if task and 'Sắp đến hạn' in (task[9] if task|length > 9 else '') else '' }}>🟡 Sắp đến hạn</option>
+        <option value="🔴 Quá hạn" {{ 'selected' if task and 'Quá hạn' in (task[9] if task|length > 9 else '') else '' }}>🔴 Quá hạn</option>
+        <option value="✅ Hoàn thành" {{ 'selected' if task and 'Hoàn thành' in (task[9] if task|length > 9 else '') else '' }}>✅ Hoàn thành</option>
+      </select>
+      <div class="d-flex gap-2 mt-4 justify-content-end">
+        <a href="/tasks" class="btn btn-modern btn-secondary">Huỷ</a>
+        <button type="submit" class="btn btn-modern btn-primary px-4"><i class="bi bi-check-lg"></i> Cập nhật</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

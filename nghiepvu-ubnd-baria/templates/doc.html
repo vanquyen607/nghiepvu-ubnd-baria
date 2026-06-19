@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Tra cứu & lên lịch{% endblock %}
+{% block content %}
+{% set active = 'doc' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-file-earmark-richtext text-primary"></i> Tra cứu văn bản & lên lịch</h4>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card-modern">
+      <div class="card-header"><i class="bi bi-upload me-2"></i>Tải lên & xử lý</div>
+      <div style="padding:1.5rem;">
+        <p class="text-muted small mb-3">
+          Tải lên văn bản (giấy mời, công văn) để tự động trích xuất thông tin,
+          tạo sự kiện Google Calendar và cập nhật Google Sheets.
+        </p>
+        <form method="POST" enctype="multipart/form-data" action="/pdf/upload">
+          <div class="mb-3">
+            <div class="form-label-modern">Chọn file văn bản</div>
+            <input class="form-control form-modern" type="file" name="file" accept=".pdf,.docx,.doc,.txt" required>
+            <div class="form-text small">Hỗ trợ: PDF, DOCX, DOC, TXT</div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6"><div class="form-check"><input class="form-check-input" type="checkbox" name="to_calendar" checked><label class="form-check-label small">Tạo Calendar</label></div></div>
+            <div class="col-6"><div class="form-check"><input class="form-check-input" type="checkbox" name="to_sheets" checked><label class="form-check-label small">Ghi vào Sheet</label></div></div>
+          </div>
+          <button type="submit" class="btn btn-modern btn-primary w-100"><i class="bi bi-arrow-up-circle"></i> Tải lên & Xử lý</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card-modern mt-3">
+      <div class="card-header"><i class="bi bi-gear me-2"></i>Chạy Agent</div>
+      <div style="padding:1rem;">
+        <div class="d-flex flex-column gap-2">
+          <a href="#" class="btn btn-modern btn-danger w-100" onclick="showConfirm('Chạy tất cả Agent','Chạy toàn bộ 4 Agent tự động?','/run-all','bi-play-circle','btn-success');return false"><i class="bi bi-play-fill"></i> Chạy tất cả Agent</a>
+          <a href="/ket-luan" class="btn btn-modern btn-outline-danger w-100"><i class="bi bi-file-earmark-check"></i> Soạn Thông báo kết luận</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card-modern">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-clock-history me-2"></i>Lịch sử xử lý</span>
+        <span class="badge bg-primary rounded-pill">{{ files|length }}</span>
+      </div>
+      <div style="max-height:500px;overflow-y:auto;">
+        {% if files %}
+        <table class="table-modern table">
+          <thead>
+            <tr>
+              <th>Tên file</th>
+              <th>Dung lượng</th>
+              <th>Ngày</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in files %}
+            <tr>
+              <td>{% if f.name.lower().endswith('.pdf') %}<i class="bi bi-file-earmark-pdf text-danger me-2"></i>{% elif f.name.lower().endswith(('.docx','.doc')) %}<i class="bi bi-file-earmark-word text-primary me-2"></i>{% else %}<i class="bi bi-file-earmark-text text-secondary me-2"></i>{% endif %}{{ f.name }}</td>
+              <td><span class="text-muted small">{{ f.size }}</span></td>
+              <td><span class="text-muted small">{{ f.date }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <p>Chưa có file văn bản nào được xử lý</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

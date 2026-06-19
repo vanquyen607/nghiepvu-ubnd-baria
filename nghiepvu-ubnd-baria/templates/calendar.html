@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Google Calendar - UBND Bà Rịa{% endblock %}
+{% block content %}
+{% set active = 'calendar' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-google text-primary"></i> Google Calendar</h4>
+  <div class="d-flex gap-2">
+    <a href="/calendar/add" class="btn btn-modern btn-primary btn-modern-sm"><i class="bi bi-plus-lg"></i> Thêm sự kiện</a>
+    <a href="/sync" class="btn btn-modern btn-modern-sm btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Đồng bộ</a>
+  </div>
+</div>
+
+<div class="card-modern">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-calendar-event me-2"></i>Sự kiện (14 ngày qua - 60 ngày tới)</span>
+    <span class="badge bg-primary rounded-pill">{{ events|length }}</span>
+  </div>
+  <div style="padding:0;">
+    {% if events %}
+    <div style="display:flex;flex-direction:column;">
+      {% for e in events %}
+      <div style="display:flex;align-items:flex-start;gap:14px;padding:.85rem 1.25rem;border-bottom:1px solid rgba(0,0,0,.04);">
+        <div style="min-width:52px;text-align:center;background:#e8f0fe;border-radius:10px;padding:.4rem .6rem;">
+          {% if e.is_all_day %}
+          <div style="font-size:.6rem;text-transform:uppercase;color:#0d6efd;font-weight:600;">{{ e.start }}</div>
+          <div style="font-size:.6rem;color:#6c757d;">CẢ NGÀY</div>
+          {% else %}
+          <div style="font-size:.6rem;text-transform:uppercase;color:#0d6efd;font-weight:600;">{{ e.start.split('T')[0].split('-')[2] }}/{{ e.start.split('T')[0].split('-')[1] }}</div>
+          <div style="font-size:.7rem;color:#6c757d;font-weight:500;">{{ e.start.split('T')[1][:5] if 'T' in e.start else '' }}</div>
+          {% endif %}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:.875rem;margin-bottom:2px;">{{ e.summary[:60] }}</div>
+          <div style="display:flex;gap:12px;font-size:.75rem;color:#6c757d;flex-wrap:wrap;">
+            {% if e.location %}<span><i class="bi bi-geo-alt"></i> {{ e.location[:40] }}</span>{% endif %}
+            {% if e.description %}<span><i class="bi bi-card-text"></i> {{ e.description[:50] }}</span>{% endif %}
+          </div>
+        </div>
+        <div class="d-flex gap-1 flex-shrink-0 no-print">
+          <a href="/calendar/edit/{{ e.id }}" class="btn btn-modern-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+          <a href="#" class="btn btn-modern-sm btn-outline-danger" title="Xoá" onclick="showConfirm('Xoá sự kiện Calendar','Xoá sự kiện này khỏi Google Calendar?','/calendar/delete/{{ e.id }}','bi-calendar-x','btn-danger');return false"><i class="bi bi-trash"></i></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" style="padding:2.5rem;">
+      <i class="bi bi-calendar2-week" style="font-size:3rem;color:#d1d5db;"></i>
+      <p>Chưa có sự kiện nào trên Google Calendar</p>
+      <a href="/calendar/add" class="btn btn-modern btn-primary"><i class="bi bi-plus-circle"></i> Tạo sự kiện mới</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Lịch công tác - UBND Bà Rịa{% endblock %}
+{% block content %}
+{% set active = 'schedule' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-calendar-week text-primary"></i> Lịch công tác</h4>
+  <div class="d-flex gap-2">
+    <a href="https://docs.google.com/spreadsheets/d/{{ lich_sheet_id }}/edit" target="_blank" class="btn btn-modern btn-modern-sm btn-outline-primary"><i class="bi bi-box-arrow-up-right"></i> Mở Sheet</a>
+    <a href="/schedule/add" class="btn btn-modern btn-primary btn-modern-sm"><i class="bi bi-plus-lg"></i> Thêm</a>
+  </div>
+</div>
+
+<div class="card-modern">
+  <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;border-bottom:1px solid rgba(0,0,0,.04);">
+    <div class="search-box flex-grow-1" style="max-width:320px;">
+      <i class="bi bi-search"></i>
+      <input type="text" class="form-control form-modern" placeholder="Tìm kiếm..." id="schSearch" onkeyup="filterSchedule()">
+    </div>
+    <span class="text-muted small">{{ schedule|length }} sự kiện</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table-modern table" id="schTable">
+      <thead>
+        <tr>
+          <th style="width:40px;">#</th>
+          <th style="width:110px;">Thứ/Ngày</th>
+          <th style="width:70px;">Giờ</th>
+          <th style="min-width:160px;">Nội dung</th>
+          <th style="width:110px;">Chủ trì</th>
+          <th style="width:100px;">Địa điểm</th>
+          <th style="width:100px;">Thành phần</th>
+          <th style="width:100px;" class="no-print">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in schedule %}
+        <tr>
+          <td class="text-muted fw-semibold">{{ loop.index }}</td>
+          <td><span style="font-size:.8rem;">{{ s[0] if s|length > 0 else '-' }}</span></td>
+          <td><span class="text-muted" style="font-size:.8rem;">{{ s[1] if s|length > 1 and s[1] else '-' }}</span></td>
+          <td>
+            <div style="font-weight:500;font-size:.875rem;">{{ s[2][:50] if s|length > 2 else '-' }}</div>
+          </td>
+          <td><span style="font-size:.8rem;">{{ s[3][:22] if s|length > 3 else '-' }}</span></td>
+          <td><span style="font-size:.8rem;color:#374151;">{{ s[7][:25] if s|length > 7 and s[7] else '-' }}</span></td>
+          <td><span style="font-size:.8rem;color:#374151;">{{ s[5][:22] if s|length > 5 else '-' }}</span></td>
+          <td class="no-print">
+            <div class="d-flex gap-1">
+              <a href="/schedule/edit/{{ loop.index }}" class="btn btn-modern-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+              <a href="#" class="btn btn-modern-sm btn-outline-danger" title="Xoá" onclick="showConfirm('Xoá sự kiện','Xoá sự kiện lịch công tác này?','/schedule/delete/{{ loop.index }}','bi-calendar-x','btn-danger');return false"><i class="bi bi-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox"></i><p>Chưa có lịch công tác</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function filterSchedule() {
+  const q = document.getElementById('schSearch').value.toLowerCase();
+  document.querySelectorAll('#schTable tbody tr').forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

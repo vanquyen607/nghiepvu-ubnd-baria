@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - UBND Bà Rịa{% endblock %}
+{% block content %}
+{% set active = 'dashboard' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-speedometer2 text-primary"></i> Dashboard</h4>
+  <div class="d-flex gap-2">
+    <a href="/tasks/add" class="btn btn-modern btn-primary btn-modern-sm"><i class="bi bi-plus-lg"></i> Thêm nhiệm vụ</a>
+    <a href="/doc" class="btn btn-modern btn-outline-primary btn-modern-sm"><i class="bi bi-file-earmark-richtext"></i> Văn bản</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <div class="stat-label">Nhiệm vụ</div>
+          <div class="stat-value">{{ stats.task_count }}</div>
+        </div>
+        <div class="stat-icon" style="background:#e8f0fe;color:#0d6efd;"><i class="bi bi-list-check"></i></div>
+      </div>
+      <div class="stat-bar" style="width:100%;background:#0d6efd;"></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <div class="stat-label">Hoàn thành</div>
+          <div class="stat-value text-success">{{ stats.done }}</div>
+        </div>
+        <div class="stat-icon" style="background:#e6f7e6;color:#198754;"><i class="bi bi-check-circle"></i></div>
+      </div>
+      <div class="stat-bar" style="width:{{ (stats.done / stats.task_count * 100) if stats.task_count else 0 }}%;background:#198754;"></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <div class="stat-label">Quá hạn</div>
+          <div class="stat-value text-danger">{{ stats.overdue }}</div>
+        </div>
+        <div class="stat-icon" style="background:#fee;color:#dc3545;"><i class="bi bi-exclamation-triangle"></i></div>
+      </div>
+      <div class="stat-bar" style="width:{{ (stats.overdue / stats.task_count * 100) if stats.task_count else 0 }}%;background:#dc3545;"></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <div class="stat-label">Sự kiện tuần</div>
+          <div class="stat-value text-warning">{{ stats.event_count }}</div>
+        </div>
+        <div class="stat-icon" style="background:#fff8e6;color:#ffc107;"><i class="bi bi-calendar-event"></i></div>
+      </div>
+      <div class="stat-bar" style="width:100%;background:#ffc107;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Tasks due soon -->
+  <div class="col-md-6">
+    <div class="card-modern">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-clock-history text-primary me-2"></i>Nhiệm vụ sắp đến hạn</span>
+        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">{{ stats.soon|length }}</span>
+      </div>
+      <div style="padding:0;">
+        {% if stats.soon %}
+          {% for t in stats.soon %}
+          <div class="quick-action" style="border:none;border-radius:0;border-bottom:1px solid #f0f0f0;">
+            <div class="qa-icon" style="background:#fff8e6;color:#f59e0b;"><i class="bi bi-alarm"></i></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:.85rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ t[1][:45] }}</div>
+              <div style="font-size:.75rem;color:#6c757d;">Hạn: {{ t[0] }}</div>
+            </div>
+            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill" style="flex-shrink:0;">Còn {{ t[2] }} ngày</span>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <i class="bi bi-emoji-smile"></i>
+            <p>Không có nhiệm vụ sắp đến hạn</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="col-md-6">
+    <div class="card-modern">
+      <div class="card-header"><i class="bi bi-lightning text-primary me-2"></i>Thao tác nhanh</div>
+      <div style="padding:1rem;display:flex;flex-direction:column;gap:8px;">
+        <a href="/tasks/add" class="quick-action">
+          <div class="qa-icon" style="background:#e8f0fe;color:#0d6efd;"><i class="bi bi-plus-circle"></i></div>
+          <span style="font-weight:500;">Thêm nhiệm vụ mới</span>
+          <i class="bi bi-chevron-right ms-auto" style="color:#9ca3af;"></i>
+        </a>
+        <a href="/schedule/add" class="quick-action">
+          <div class="qa-icon" style="background:#e6f7e6;color:#198754;"><i class="bi bi-calendar-plus"></i></div>
+          <span style="font-weight:500;">Thêm sự kiện lịch công tác</span>
+          <i class="bi bi-chevron-right ms-auto" style="color:#9ca3af;"></i>
+        </a>
+        <a href="/doc" class="quick-action">
+          <div class="qa-icon" style="background:#fff8e6;color:#f59e0b;"><i class="bi bi-file-earmark-richtext"></i></div>
+          <span style="font-weight:500;">Tra cứu văn bản & lên lịch</span>
+          <i class="bi bi-chevron-right ms-auto" style="color:#9ca3af;"></i>
+        </a>
+        <a href="/ket-luan" class="quick-action">
+          <div class="qa-icon" style="background:#fee2e2;color:#dc3545;"><i class="bi bi-file-earmark-check"></i></div>
+          <span style="font-weight:500;">Thông báo kết luận cuộc họp</span>
+          <i class="bi bi-chevron-right ms-auto" style="color:#9ca3af;"></i>
+        </a>
+        <a href="/sync" class="quick-action">
+          <div class="qa-icon" style="background:#f3e8ff;color:#7c3aed;"><i class="bi bi-arrow-repeat"></i></div>
+          <span style="font-weight:500;">Đồng bộ trạng thái nhiệm vụ</span>
+          <i class="bi bi-chevron-right ms-auto" style="color:#9ca3af;"></i>
+        </a>
+        <a href="#" class="quick-action" onclick="showConfirm('Chạy tất cả Agent','Chạy toàn bộ 4 Agent tự động?','/run-all','bi-play-circle','btn-success');return false">
+          <div class="qa-icon" style="background:#fee2e2;color:#dc3545;"><i class="bi bi-play-fill"></i></div>
+          <span style="font-weight:500;">Chạy tất cả Agent</span>
+          <i class="bi bi-chevron-right ms-auto" style="color:#9ca3af;"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

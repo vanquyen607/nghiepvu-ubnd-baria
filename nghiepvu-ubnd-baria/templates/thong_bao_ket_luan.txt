@@ -1,0 +1,33 @@
+ỦY BAN NHÂN DÂN
+PHƯỜNG BÀ RỊA
+─────────────
+Số:    /TB-UBND
+
+CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+Độc lập – Tự do – Hạnh phúc
+──────────────────────────
+Bà Rịa, ngày    tháng    năm 2025
+
+THÔNG BÁO KẾT LUẬN
+{ten_cuoc_hop}
+
+I. THÔNG TIN CUỘC HỌP
+- Thời gian: {thoi_gian}
+- Địa điểm: {dia_diem}
+- Chủ trì: {chu_tri}
+- Thành phần tham dự: {thanh_phan}
+
+II. NỘI DUNG BÁO CÁO
+{noi_dung_bao_cao}
+
+III. Ý KIẾN CHỈ ĐẠO VÀ KẾT LUẬN
+{y_kien_chi_dao}
+
+IV. NHIỆM VỤ ĐƯỢC GIAO
+{nhiem_vu_duoc_giao}
+
+Văn phòng UBND phường Bà Rịa thông báo để các đơn vị liên quan biết, thực hiện./.
+
+Nơi nhận:                                TM. ỦY BAN NHÂN DÂN
+- {noi_nhan};                              CHỦ TỊCH
+- Lưu: VT.

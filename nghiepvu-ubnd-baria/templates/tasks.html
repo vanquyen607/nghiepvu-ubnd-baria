@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Quản lý nhiệm vụ{% endblock %}
+{% block content %}
+{% set active = 'tasks' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-list-check text-primary"></i> Quản lý nhiệm vụ</h4>
+  <div class="d-flex gap-2">
+    <a href="/tasks/add" class="btn btn-modern btn-primary btn-modern-sm"><i class="bi bi-plus-lg"></i> Thêm</a>
+  </div>
+</div>
+
+<div class="card-modern">
+  <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;border-bottom:1px solid rgba(0,0,0,.04);">
+    <div class="search-box flex-grow-1" style="max-width:320px;">
+      <i class="bi bi-search"></i>
+      <input type="text" class="form-control form-modern" placeholder="Tìm kiếm nhiệm vụ..." id="taskSearch" onkeyup="filterTasks()">
+    </div>
+    <span class="text-muted small">{{ tasks|length }} nhiệm vụ</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table-modern table" id="taskTable">
+      <thead>
+        <tr>
+          <th style="width:40px;">#</th>
+          <th style="min-width:200px;">Nội dung</th>
+          <th style="width:100px;">Số VB</th>
+          <th style="width:110px;">Hạn</th>
+          <th style="width:130px;">Chủ trì</th>
+          <th style="width:130px;">Trạng thái</th>
+          <th style="width:100px;" class="no-print">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tasks %}
+        <tr>
+          <td class="text-muted fw-semibold">{{ loop.index }}</td>
+          <td>
+            <div style="font-weight:500;font-size:.875rem;">{{ t[1][:55] if t|length > 1 else '-' }}</div>
+          </td>
+          <td><span class="badge bg-light text-dark" style="font-weight:500;font-size:.75rem;">{{ t[2][:15] if t|length > 2 else '-' }}</span></td>
+          <td><span style="font-size:.8rem;">{{ t[4] if t|length > 4 else '-' }}</span></td>
+          <td><span style="font-size:.8rem;color:#374151;">{{ t[5][:22] if t|length > 5 else '-' }}</span></td>
+          <td>
+            {% set st = t[9] if t|length > 9 else '🟢 Đang thực hiện' %}
+            {% if '✅' in st %}
+              <span class="status-badge" style="background:#e6f7e6;color:#198754;">{{ st }}</span>
+            {% elif '🔴' in st %}
+              <span class="status-badge" style="background:#fee;color:#dc3545;">{{ st }}</span>
+            {% elif '🟡' in st %}
+              <span class="status-badge" style="background:#fff8e6;color:#f59e0b;">{{ st }}</span>
+            {% else %}
+              <span class="status-badge" style="background:#e8f0fe;color:#0d6efd;">{{ st }}</span>
+            {% endif %}
+          </td>
+          <td class="no-print">
+            <div class="d-flex gap-1">
+              <a href="/tasks/edit/{{ loop.index }}" class="btn btn-modern-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+              <a href="/tasks/status/{{ loop.index }}" class="btn btn-modern-sm btn-outline-success" title="Cập nhật trạng thái"><i class="bi bi-arrow-repeat"></i></a>
+              <a href="#" class="btn btn-modern-sm btn-outline-danger" title="Xoá" onclick="showConfirm('Xoá nhiệm vụ','Xoá nhiệm vụ này?','/tasks/delete/{{ loop.index }}','bi-trash','btn-danger');return false"><i class="bi bi-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7"><div class="empty-state"><i class="bi bi-inbox"></i><p>Chưa có nhiệm vụ nào</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function filterTasks() {
+  const q = document.getElementById('taskSearch').value.toLowerCase();
+  document.querySelectorAll('#taskTable tbody tr').forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

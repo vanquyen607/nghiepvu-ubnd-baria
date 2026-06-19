@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Đồng bộ{% endblock %}
+{% block content %}
+{% set active = 'sync' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-arrow-repeat text-primary"></i> Đồng bộ dữ liệu</h4>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card-modern text-center" style="padding:2rem;">
+      <div style="width:64px;height:64px;border-radius:16px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+        <i class="bi bi-arrow-repeat fs-2 text-primary"></i>
+      </div>
+      <h5 style="font-weight:600;">Đồng bộ Sheets → Web</h5>
+      <p class="text-muted small mb-3">Đọc dữ liệu mới nhất từ Google Sheets về giao diện web</p>
+      <a href="/sync/sheets-to-web" class="btn btn-modern btn-primary" data-loading>
+        <i class="bi bi-cloud-download"></i> Đồng bộ ngay
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card-modern text-center" style="padding:2rem;">
+      <div style="width:64px;height:64px;border-radius:16px;background:#e6f7e6;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+        <i class="bi bi-arrow-up-short fs-2 text-success"></i>
+      </div>
+      <h5 style="font-weight:600;">Đồng bộ Web → Sheets</h5>
+      <p class="text-muted small mb-3">Ghi dữ liệu từ web lên Google Sheets</p>
+      <a href="/sync/web-to-sheets" class="btn btn-modern btn-success" data-loading>
+        <i class="bi bi-cloud-upload"></i> Đồng bộ ngay
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

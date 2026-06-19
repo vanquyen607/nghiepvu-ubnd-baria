@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Cài đặt - UBND Bà Rịa{% endblock %}
+{% block content %}
+{% set active = 'settings' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-gear text-primary"></i> Cài đặt</h4>
+</div>
+
+<div class="row g-3">
+  <!-- Kết nối -->
+  <div class="col-lg-6">
+    <div class="card-modern">
+      <div class="card-header"><i class="bi bi-cloud-check me-2"></i>Kết nối Google</div>
+      <div style="padding:1.25rem;">
+        <div style="display:flex;align-items:center;gap:12px;padding:.75rem 1rem;background:#f8f9fc;border-radius:8px;margin-bottom:1.25rem;">
+          <div style="width:44px;height:44px;border-radius:10px;background:{% if oauth_ok %}#e6f7e6{% else %}#fee{% endif %};display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+            <i class="bi {% if oauth_ok %}bi-check-circle-fill text-success{% else %}bi-x-circle-fill text-danger{% endif %}"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:.9rem;">{% if oauth_ok %}Đã kết nối Google OAuth{% else %}Chưa kết nối{% endif %}</div>
+            <div style="font-size:.75rem;color:#6c757d;">Token: {{ 'token.json' if oauth_ok else 'Chưa có token' }}</div>
+          </div>
+          <a href="/settings/re-auth" class="btn btn-modern btn-modern-sm btn-outline-primary ms-auto" data-loading>
+            <i class="bi bi-arrow-clockwise"></i> Cấp lại
+          </a>
+        </div>
+        <form method="POST">
+          <div class="mb-3">
+            <div class="form-label-modern"><i class="bi bi-google me-1"></i> Calendar ID</div>
+            <input class="form-control form-modern" name="calendar_id" value="{{ config.get('GOOGLE_CALENDAR_ID', 'primary') }}" placeholder="primary">
+            <div style="font-size:.7rem;color:#9ca3af;margin-top:3px;">Mặc định: primary (lịch chính)</div>
+          </div>
+          <div class="mb-3">
+            <div class="form-label-modern"><i class="bi bi-file-spreadsheet me-1"></i> Sheet ID - Nhiệm vụ</div>
+            <input class="form-control form-modern" name="task_sheet_id" value="{{ config.get('GOOGLE_SHEET_TASK_ID', '') }}" placeholder="Sheet ID">
+          </div>
+          <div class="mb-3">
+            <div class="form-label-modern"><i class="bi bi-file-spreadsheet me-1"></i> Sheet ID - Lịch công tác</div>
+            <input class="form-control form-modern" name="lich_sheet_id" value="{{ config.get('GOOGLE_SHEET_LICH_ID', '') }}" placeholder="Sheet ID">
+          </div>
+          <div class="mb-3">
+            <div class="form-label-modern"><i class="bi bi-envelope me-1"></i> Email thông báo</div>
+            <input class="form-control form-modern" name="email" value="{{ config.get('NOTIFICATION_EMAIL', '') }}" placeholder="email@example.com">
+          </div>
+          <button type="submit" class="btn btn-modern btn-primary w-100"><i class="bi bi-floppy"></i> Lưu cấu hình</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông tin hệ thống -->
+  <div class="col-lg-6">
+    <div class="card-modern">
+      <div class="card-header"><i class="bi bi-info-circle me-2"></i>Thông tin hệ thống</div>
+      <div style="padding:1.25rem;">
+        <table class="table-modern table" style="font-size:.85rem;">
+          <tbody>
+            <tr><td style="font-weight:500;color:#374151;width:140px;">Trạng thái</td><td><span class="status-badge" style="background:#e6f7e6;color:#198754;"><i class="bi bi-check-circle-fill"></i> Đang hoạt động</span></td></tr>
+            <tr><td style="font-weight:500;color:#374151;">OAuth Token</td><td>{% if oauth_ok %}<span class="text-success"><i class="bi bi-check-circle-fill"></i> Hợp lệ</span>{% else %}<span class="text-danger"><i class="bi bi-x-circle-fill"></i> Chưa có</span>{% endif %}</td></tr>
+            <tr><td style="font-weight:500;color:#374151;">Calendar</td><td><code>{{ config.get('GOOGLE_CALENDAR_ID', 'primary') }}</code></td></tr>
+            <tr><td style="font-weight:500;color:#374151;">Sheet Nhiệm vụ</td><td><code>{{ config.get('GOOGLE_SHEET_TASK_ID', '—')[:20] }}...</code></td></tr>
+            <tr><td style="font-weight:500;color:#374151;">Sheet Lịch</td><td><code>{{ config.get('GOOGLE_SHEET_LICH_ID', '—')[:20] }}...</code></td></tr>
+            <tr><td style="font-weight:500;color:#374151;">Email</td><td>{{ config.get('NOTIFICATION_EMAIL', '—') }}</td></tr>
+            <tr><td style="font-weight:500;color:#374151;">Phiên bản</td><td>1.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

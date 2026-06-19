@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa' if is_edit else 'Thêm' }} sự kiện Calendar{% endblock %}
+{% block content %}
+{% set active = 'calendar' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-{{ 'pencil' if is_edit else 'calendar-plus' }} text-primary"></i> {{ 'Sửa' if is_edit else 'Thêm' }} sự kiện Google Calendar</h4>
+  <a href="/calendar" class="btn btn-modern btn-modern-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+</div>
+
+<div class="card-modern form-page-card">
+  <div style="padding:1.5rem 2rem;">
+    <form method="POST">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="form-label-modern"><i class="bi bi-type me-1"></i> Tiêu đề <span class="text-danger">*</span></div>
+          <input class="form-control form-modern" name="summary" value="{{ ev.summary if ev else '' }}" required placeholder="Nhập tiêu đề sự kiện">
+        </div>
+        <div class="col-md-4">
+          <div class="form-label-modern"><i class="bi bi-calendar me-1"></i> Ngày <span class="text-danger">*</span></div>
+          <input class="form-control form-modern" type="text" name="ngay" value="{{ ngay }}" required placeholder="dd/mm/yyyy" pattern="\d{2}/\d{2}/\d{4}">
+        </div>
+        <div class="col-md-4">
+          <div class="form-label-modern"><i class="bi bi-clock me-1"></i> Giờ bắt đầu</div>
+          <input class="form-control form-modern" type="time" name="gio_bd" value="{{ gio_bd }}">
+        </div>
+        <div class="col-md-4">
+          <div class="form-label-modern"><i class="bi bi-clock-history me-1"></i> Giờ kết thúc</div>
+          <input class="form-control form-modern" type="time" name="gio_kt" value="{{ gio_kt }}">
+        </div>
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="all_day" id="allDay" {{ 'checked' if is_all_day else '' }}>
+            <label class="form-check-label small" for="allDay">Sự kiện cả ngày</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-label-modern"><i class="bi bi-geo-alt me-1"></i> Địa điểm</div>
+          <input class="form-control form-modern" name="location" value="{{ ev.location if ev else '' }}" placeholder="Phòng họp, địa chỉ...">
+        </div>
+        <div class="col-12">
+          <div class="form-label-modern"><i class="bi bi-card-text me-1"></i> Mô tả</div>
+          <textarea class="form-control form-modern" name="description" rows="3" placeholder="Nội dung chi tiết...">{{ ev.description if ev else '' }}</textarea>
+        </div>
+        <div class="col-12 mt-4 d-flex gap-2 justify-content-end">
+          <a href="/calendar" class="btn btn-modern btn-secondary">Huỷ</a>
+          <button type="submit" class="btn btn-modern btn-primary px-4"><i class="bi bi-check-lg"></i> {{ 'Cập nhật' if is_edit else 'Thêm mới' }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

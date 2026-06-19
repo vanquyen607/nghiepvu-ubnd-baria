@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+scripts/.env
+scripts/token.json
+scripts/client_secret.json
+scripts/credentials.json
+scripts/users.json
+
+# Documents
+*.pdf
+
+# Logs
+logs/
+*.log
+
+# Output
+output/
+
+# OS
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa' if is_edit else 'Thêm' }} nhiệm vụ{% endblock %}
+{% block content %}
+{% set active = 'tasks' %}
+
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-{{ 'pencil' if is_edit else 'plus-circle' }} text-primary"></i> {{ 'Sửa' if is_edit else 'Thêm' }} nhiệm vụ</h4>
+  <a href="/tasks" class="btn btn-modern btn-modern-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+</div>
+
+<div class="card-modern form-page-card">
+  <div style="padding:1.5rem 2rem;">
+    <form method="POST">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="form-label-modern"><i class="bi bi-text-paragraph me-1"></i> Nội dung công việc <span class="text-danger">*</span></div>
+          <textarea class="form-control form-modern" name="content" rows="3" required>{{ task[1] if task else '' }}</textarea>
+        </div>
+        <div class="col-md-6">
+          <div class="form-label-modern"><i class="bi bi-file-text me-1"></i> Số văn bản</div>
+          <input class="form-control form-modern" name="so_vb" value="{{ task[2] if task else '' }}">
+        </div>
+        <div class="col-md-6">
+          <div class="form-label-modern"><i class="bi bi-person me-1"></i> Đơn vị chủ trì</div>
+          <input class="form-control form-modern" name="chu_tri" value="{{ task[5] if task else '' }}" placeholder="Phòng/Đơn vị">
+        </div>
+        <div class="col-md-4">
+          <div class="form-label-modern"><i class="bi bi-buildings me-1"></i> Đơn vị phối hợp</div>
+          <input class="form-control form-modern" name="phoi_hop" value="{{ task[6] if task else '' }}" placeholder="Phối hợp">
+        </div>
+        <div class="col-md-4">
+          <div class="form-label-modern"><i class="bi bi-person-badge me-1"></i> Người phụ trách</div>
+          <input class="form-control form-modern" name="nguoi_phu_trach" value="{{ task[7] if task else '' }}" placeholder="Tên người phụ trách">
+        </div>
+        <div class="col-md-4">
+          <div class="form-label-modern"><i class="bi bi-person-check me-1"></i> Người theo dõi</div>
+          <input class="form-control form-modern" name="nguoi_theo_doi" value="{{ task[8] if task else '' }}" placeholder="Tên người theo dõi">
+        </div>
+        <div class="col-md-6">
+          <div class="form-label-modern"><i class="bi bi-calendar-due me-1"></i> Hạn xử lý <span class="text-danger">*</span></div>
+          <input class="form-control form-modern" type="text" name="han_xu_ly" value="{{ task[4] if task else '' }}" required placeholder="dd/mm/yyyy" pattern="\d{2}/\d{2}/\d{4}">
+        </div>
+        <div class="col-md-3">
+          <div class="form-label-modern"><i class="bi bi-calendar-date me-1"></i> Ngày ban hành</div>
+          <input class="form-control form-modern" type="text" name="ngay_bh" value="{{ task[3] if task else '' }}" placeholder="dd/mm/yyyy">
+        </div>
+        <div class="col-md-3">
+          <div class="form-label-modern"><i class="bi bi-check-circle me-1"></i> Trạng thái</div>
+          <select class="form-control form-modern" name="trang_thai">
+            <option value="🟢 Đang thực hiện" {{ 'selected' if task and 'Đang thực hiện' in (task[9] if task|length > 9 else '') else '' }}>🟢 Đang thực hiện</option>
+            <option value="🟡 Đang xử lý" {{ 'selected' if task and 'Đang xử lý' in (task[9] if task|length > 9 else '') else '' }}>🟡 Đang xử lý</option>
+            <option value="✅ Đã hoàn thành" {{ 'selected' if task and '✅' in (task[9] if task|length > 9 else '') else '' }}>✅ Đã hoàn thành</option>
+            <option value="🔴 Quá hạn" {{ 'selected' if task and '🔴' in (task[9] if task|length > 9 else '') else '' }}>🔴 Quá hạn</option>
+          </select>
+        </div>
+        <div class="col-12 mt-4 d-flex gap-2 justify-content-end">
+          <a href="/tasks" class="btn btn-modern btn-secondary">Huỷ</a>
+          <button type="submit" class="btn btn-modern btn-primary px-4"><i class="bi bi-check-lg"></i> {{ 'Cập nhật' if is_edit else 'Thêm mới' }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
