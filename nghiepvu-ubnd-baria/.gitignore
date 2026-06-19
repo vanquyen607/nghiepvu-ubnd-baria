@@ -24,6 +24,10 @@ logs/
 # Output
 output/
 
+# Database
+instance/
+*.db
+
 # OS
 Thumbs.db
 .DS_Store

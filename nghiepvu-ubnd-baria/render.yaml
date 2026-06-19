@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: ubnd-baria
+    runtime: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash start.sh
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: GOOGLE_CALENDAR_ID
+        value: primary
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GOOGLE_SHEET_TASK_ID
+        sync: false
+      - key: GOOGLE_SHEET_LICH_ID
+        sync: false
+      - key: NOTIFICATION_EMAIL
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET_BASE64
+        sync: false
+      - key: GOOGLE_TOKEN_BASE64
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

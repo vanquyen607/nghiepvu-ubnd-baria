@@ -6,9 +6,7 @@ Flask web interface cho hệ thống tự động hóa nghiệp vụ hành chín
 import os
 import sys
 import glob
-import json
 import re
-import hashlib
 from functools import wraps
 from datetime import datetime, date, timezone, timedelta
 from io import BytesIO
@@ -16,11 +14,23 @@ from io import BytesIO
 sys.stdout.reconfigure(encoding='utf-8')
 BASE = os.path.dirname(os.path.abspath(__file__))
 SCRIPTS = os.path.join(BASE, "scripts")
+DATA_DIR = ""
 
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=os.path.join(SCRIPTS, ".env"), override=True)
 
+_dd = os.getenv("DATA_DIR", "")
+if _dd:
+    DATA_DIR = _dd
+    SCRIPTS = os.path.join(_dd, "scripts")
+    os.makedirs(os.path.join(_dd, "instance"), exist_ok=True)
+    os.makedirs(SCRIPTS, exist_ok=True)
+    os.makedirs(os.path.join(_dd, "config"), exist_ok=True)
+    os.makedirs(os.path.join(_dd, "output"), exist_ok=True)
+    os.makedirs(os.path.join(_dd, "logs"), exist_ok=True)
+
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, session
+from models import db, User
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
@@ -31,7 +41,7 @@ CALENDAR_ID = os.getenv("GOOGLE_CALENDAR_ID", "primary")
 SHEET_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 CAL_SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
-token_path = os.path.join(SCRIPTS, TOKEN)
+token_path = os.path.join(DATA_DIR, "config", TOKEN) if DATA_DIR else os.path.join(SCRIPTS, TOKEN)
 
 
 def get_creds(scopes):
@@ -81,24 +91,12 @@ def delete_row(sheet_id, row_index):
 app = Flask(__name__, template_folder=os.path.join(BASE, 'templates'))
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'change-me-in-production')
 app.config['SESSION_COOKIE_NAME'] = 'ubnd_session'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", f"sqlite:///{DATA_DIR}/instance/ubnd.db" if DATA_DIR else "sqlite:///ubnd.db")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
 
-USERS_FILE = os.path.join(BASE, 'scripts', 'users.json')
-
-
-def load_users():
-    if not os.path.exists(USERS_FILE):
-        return {}
-    with open(USERS_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-
-def save_users(users):
-    with open(USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, ensure_ascii=False, indent=2)
-
-
-def hash_pass(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+with app.app_context():
+    db.create_all()
 
 
 def login_required(f):
@@ -135,9 +133,9 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
-        users = load_users()
-        if email in users and users[email]['password'] == hash_pass(password):
-            session['user'] = {'email': email, 'fullname': users[email]['fullname']}
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):
+            session['user'] = {'email': user.email, 'fullname': user.fullname}
             flash('Đăng nhập thành công!', 'success')
             return redirect('/dashboard')
         return render_template('login.html', error='Email hoặc mật khẩu không đúng.')
@@ -159,11 +157,12 @@ def register():
             return render_template('register.html', error='Mật khẩu xác nhận không khớp.')
         if len(password) < 6:
             return render_template('register.html', error='Mật khẩu tối thiểu 6 ký tự.')
-        users = load_users()
-        if email in users:
+        if User.query.filter_by(email=email).first():
             return render_template('register.html', error='Email đã được đăng ký.')
-        users[email] = {'fullname': fullname, 'password': hash_pass(password)}
-        save_users(users)
+        user = User(email=email, fullname=fullname)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
         session['user'] = {'email': email, 'fullname': fullname}
         flash('Đăng ký thành công!', 'success')
         return redirect('/dashboard')
